@@ -69,12 +69,19 @@
 
 		doneButton.frame = CGRectMake(BUTTON_X, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
-		[doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
-		[doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
 		[doneButton addTarget:self action:@selector(doneButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-		[doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-		[doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
-		doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+            doneButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        }
+        else{
+            [doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
+            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+            [doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+            doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+        }
 		doneButton.autoresizingMask = UIViewAutoresizingNone;
 		doneButton.exclusiveTouch = YES;
 
@@ -95,7 +102,9 @@
 		UISegmentedControl *showControl = [[UISegmentedControl alloc] initWithItems:buttonItems];
 
 		showControl.frame = CGRectMake(showControlX, BUTTON_Y, SHOW_CONTROL_WIDTH, BUTTON_HEIGHT);
-		showControl.tintColor = (useTint ? [UIColor blackColor] : [UIColor colorWithWhite:0.8f alpha:1.0f]);
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0f) {
+            showControl.tintColor = (useTint ? [UIColor blackColor] : [UIColor colorWithWhite:0.8f alpha:1.0f]);
+        }
 		showControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 		showControl.segmentedControlStyle = UISegmentedControlStyleBar;
 		showControl.selectedSegmentIndex = 0; // Default segment index

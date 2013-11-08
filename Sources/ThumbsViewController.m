@@ -92,7 +92,13 @@
 
 	assert(delegate != nil); assert(document != nil);
 
-	self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        self.view.backgroundColor = [UIColor whiteColor];
+    }
+    else{
+        self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
+    }
+	
 
 	CGRect scrollViewRect = self.view.bounds; UIView *fakeStatusBar = nil;
 

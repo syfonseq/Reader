@@ -87,12 +87,19 @@
 
 		doneButton.frame = CGRectMake(leftButtonX, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
-		[doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
-		[doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+            doneButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        }
+        else{
+            [doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
+            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+            [doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+            doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+        }
 		[doneButton addTarget:self action:@selector(doneButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-		[doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-		[doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
-		doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
 		doneButton.autoresizingMask = UIViewAutoresizingNone;
 		doneButton.exclusiveTouch = YES;
 
@@ -107,10 +114,15 @@
 		UIButton *thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 		thumbsButton.frame = CGRectMake(leftButtonX, BUTTON_Y, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
-		[thumbsButton setImage:[UIImage imageNamed:@"Reader-Thumbs"] forState:UIControlStateNormal];
 		[thumbsButton addTarget:self action:@selector(thumbsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-		[thumbsButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-		[thumbsButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [thumbsButton setImage:[self imageNamed:@"Reader-Thumbs"withColor:self.tintColor] forState:UIControlStateNormal];
+        }
+        else{
+            [thumbsButton setImage:[UIImage imageNamed:@"Reader-Thumbs"] forState:UIControlStateNormal];
+            [thumbsButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [thumbsButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        }
 		thumbsButton.autoresizingMask = UIViewAutoresizingNone;
 		thumbsButton.exclusiveTouch = YES;
 
@@ -135,17 +147,49 @@
 		flagButton.frame = CGRectMake(rightButtonX, BUTTON_Y, MARK_BUTTON_WIDTH, BUTTON_HEIGHT);
 		//[flagButton setImage:[UIImage imageNamed:@"Reader-Mark-N"] forState:UIControlStateNormal];
 		[flagButton addTarget:self action:@selector(markButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-		[flagButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-		[flagButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            markImageN = [self imageNamed:@"Reader-Mark-N" withColor:self.tintColor]; // N image
+            
+            UIImage *img = [UIImage imageNamed:@"Reader-Mark-Y" ]; // Y image
+            
+            CGSize size = CGSizeMake(32, 32);
+            // begin a new image context, to draw our colored image onto
+            UIGraphicsBeginImageContextWithOptions(size, NO, 2.0);
+            
+            // get a reference to that context we created
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            
+            CGRect rect = CGRectMake(0, 0, size.width, size.height);
+            CGContextScaleCTM(context, 1, -1);
+            CGContextTranslateCTM(context, 0, -rect.size.height);
+            
+            float radius = 4.0f;
+            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(1, 1, rect.size.width-2, rect.size.height-2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
+            [self.tintColor setStroke];
+            [path stroke];
+
+            CGImageRef maskImage = [img CGImage];
+            CGContextClipToMask(context, CGRectMake(size.width/2-img.size.width/2, size.height/2-img.size.height/2, img.size.width, img.size.height), maskImage);
+            
+            [self.tintColor setFill];
+            CGContextFillRect(context, rect);
+            
+            // generate a new UIImage from the graphics context we drew onto
+            markImageY = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        }
+        else{
+            [flagButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [flagButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+            markImageN = [UIImage imageNamed:@"Reader-Mark-N"]; // N image
+            markImageY = [UIImage imageNamed:@"Reader-Mark-Y"]; // Y image
+        }
 		flagButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 		flagButton.exclusiveTouch = YES;
 
 		[self addSubview:flagButton]; titleWidth -= (MARK_BUTTON_WIDTH + BUTTON_SPACE);
 
 		markButton = flagButton; markButton.enabled = NO; markButton.tag = NSIntegerMin;
-
-		markImageN = [UIImage imageNamed:@"Reader-Mark-N"]; // N image
-		markImageY = [UIImage imageNamed:@"Reader-Mark-Y"]; // Y image
 
 #endif // end of READER_BOOKMARKS Option
 
@@ -162,10 +206,15 @@
 				UIButton *emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 				emailButton.frame = CGRectMake(rightButtonX, BUTTON_Y, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
-				[emailButton setImage:[UIImage imageNamed:@"Reader-Email"] forState:UIControlStateNormal];
 				[emailButton addTarget:self action:@selector(emailButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-				[emailButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-				[emailButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+                    [emailButton setImage:[self imageNamed:@"Reader-Email" withColor:self.tintColor] forState:UIControlStateNormal];
+                }
+                else{
+                    [emailButton setImage:[UIImage imageNamed:@"Reader-Email"] forState:UIControlStateNormal];
+                    [emailButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+                    [emailButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+                }
 				emailButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 				emailButton.exclusiveTouch = YES;
 
@@ -188,10 +237,16 @@
 				UIButton *printButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 				printButton.frame = CGRectMake(rightButtonX, BUTTON_Y, PRINT_BUTTON_WIDTH, BUTTON_HEIGHT);
-				[printButton setImage:[UIImage imageNamed:@"Reader-Print"] forState:UIControlStateNormal];
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+                    [printButton setImage:[self imageNamed:@"Reader-Print"withColor:self.tintColor] forState:UIControlStateNormal];
+                }
+                else{
+                    [printButton setImage:[UIImage imageNamed:@"Reader-Print"] forState:UIControlStateNormal];
+                    [printButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+                    [printButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+                }
+				
 				[printButton addTarget:self action:@selector(printButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-				[printButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-				[printButton setBackgroundImage:buttonN forState:UIControlStateNormal];
 				printButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
 				printButton.exclusiveTouch = YES;
 
@@ -224,6 +279,35 @@
 	}
 
 	return self;
+}
+
+-(UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color {
+    // load the image
+    
+    UIImage *img = [UIImage imageNamed:name];
+    
+    // begin a new image context, to draw our colored image onto
+    UIGraphicsBeginImageContextWithOptions(img.size, NO, 2.0);
+    
+    // get a reference to that context we created
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGRect rect = CGRectMake(0, 0, img.size.width, img.size.height);
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -rect.size.height);
+    
+    CGImageRef maskImage = [img CGImage];
+    CGContextClipToMask(context, rect, maskImage);
+    
+    [color setFill];
+    CGContextFillRect(context, rect);
+    
+    // generate a new UIImage from the graphics context we drew onto
+    UIImage *coloredImg = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    //return the color-burned image
+    return coloredImg;
 }
 
 - (void)setBookmarkState:(BOOL)state

@@ -50,18 +50,30 @@
 		self.userInteractionEnabled = YES;
 		self.contentMode = UIViewContentModeRedraw;
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		self.backgroundColor = [UIColor clearColor];
 
-		CAGradientLayer *layer = (CAGradientLayer *)self.layer;
-		UIColor *liteColor = [UIColor colorWithWhite:0.92f alpha:0.8f];
-		UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
-		layer.colors = [NSArray arrayWithObjects:(id)liteColor.CGColor, (id)darkColor.CGColor, nil];
-
-		CGRect shadowRect = self.bounds; shadowRect.origin.y += shadowRect.size.height; shadowRect.size.height = SHADOW_HEIGHT;
-
-		UIXToolbarShadow *shadowView = [[UIXToolbarShadow alloc] initWithFrame:shadowRect];
-
-		[self addSubview:shadowView]; 
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            if (self.backgroundColor == nil) {
+                self.backgroundColor = [UIColor colorWithWhite:0.965f alpha:0.95f];
+            }
+            CGRect lineRect = self.bounds; lineRect.origin.y += lineRect.size.height; lineRect.size.height = 0.5f;
+            UIView *grayLine = [[UIView alloc]initWithFrame:lineRect];
+            grayLine.backgroundColor = [UIColor colorWithWhite:0.7f alpha:1.0f];
+            [self addSubview:grayLine]; // Add the line to the view
+        }
+        else{
+            self.backgroundColor = [UIColor clearColor];
+            
+            CAGradientLayer *layer = (CAGradientLayer *)self.layer;
+            UIColor *liteColor = [UIColor colorWithWhite:0.92f alpha:0.8f];
+            UIColor *darkColor = [UIColor colorWithWhite:0.32f alpha:0.8f];
+            layer.colors = [NSArray arrayWithObjects:(id)liteColor.CGColor, (id)darkColor.CGColor, nil];
+            
+            CGRect shadowRect = self.bounds; shadowRect.origin.y += shadowRect.size.height; shadowRect.size.height = SHADOW_HEIGHT;
+            
+            UIXToolbarShadow *shadowView = [[UIXToolbarShadow alloc] initWithFrame:shadowRect];
+            
+            [self addSubview:shadowView];
+        }
 	}
 
 	return self;

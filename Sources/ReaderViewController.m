@@ -47,6 +47,8 @@
 	ReaderMainToolbar *mainToolbar;
 
 	ReaderMainPagebar *mainPagebar;
+    
+    UIColor *barsTintColor;
 
 	NSMutableDictionary *contentViews;
 
@@ -307,13 +309,29 @@
 	return reader;
 }
 
+- (void)setBarTintColor:(UIColor *)color
+{
+    barsTintColor = color;
+    if (mainPagebar != nil){
+        mainPagebar.backgroundColor = color;
+    }
+    if (mainToolbar != nil){
+        mainToolbar.backgroundColor = color;
+    }
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
 
 	assert(document != nil); // Must have a valid ReaderDocument
 
-	self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        self.view.backgroundColor = [UIColor whiteColor];
+    }
+    else {
+        self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
+    }
 
 	CGRect scrollViewRect = self.view.bounds; UIView *fakeStatusBar = nil;
 
@@ -354,6 +372,11 @@
 	mainPagebar.delegate = self; // ReaderMainPagebarDelegate
 	[self.view addSubview:mainPagebar];
 
+    if (barsTintColor != nil) {
+        mainToolbar.backgroundColor = barsTintColor;
+        mainPagebar.backgroundColor = barsTintColor;
+    }
+    
 	if (fakeStatusBar != nil) [self.view addSubview:fakeStatusBar]; // Add status bar background view
 
 	UITapGestureRecognizer *singleTapOne = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
