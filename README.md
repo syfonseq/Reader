@@ -1,6 +1,16 @@
 
 ## PDF Reader Core for iOS
 
+### Information about this fork (https://github.com/klofberg/Reader)
+Adds support for iOS 7 appearance.
+
+Allows for setting barTintColor and tintColor to change the look of the Reader.
+Example:
+
+  ReaderViewController *readerViewController = [[ReaderViewController alloc] initWithReaderDocument:document];
+  [readerViewController setBarTintColor:[UIColor colorWithRed:0.1 green:0.3 blue:0.8 alpha:0.9]];
+  readerViewController.view.tintColor = [UIColor colorWithWhite:1 alpha:1];
+
 ### Introduction
 
 I've crafted this open source PDF reader code for fellow iOS
