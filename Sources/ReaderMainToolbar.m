@@ -35,6 +35,12 @@
 
 	UIImage *markImageN;
 	UIImage *markImageY;
+    
+    UIButton *doneButton;
+    UIButton *thumbsButton;
+    UIButton *flagButton;
+    UIButton *emailButton;
+    UIButton *printButton;
 }
 
 #pragma mark Constants
@@ -63,6 +69,27 @@
 	return [self initWithFrame:frame document:nil];
 }
 
+- (void)setTintColor:(UIColor *)tintColor
+{
+    super.tintColor = tintColor;
+    if (doneButton != nil) {
+        [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+        [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+    }
+    if (thumbsButton != nil) {
+        [thumbsButton setImage:[self imageNamed:@"Reader-Thumbs"withColor:self.tintColor] forState:UIControlStateNormal];
+    }
+    if (flagButton) {
+        [self setFlagButtonIos7Image];
+    }
+    if (emailButton != nil) {
+        [emailButton setImage:[self imageNamed:@"Reader-Email" withColor:self.tintColor] forState:UIControlStateNormal];
+    }
+    if (printButton != nil) {
+        [printButton setImage:[self imageNamed:@"Reader-Print"withColor:self.tintColor] forState:UIControlStateNormal];
+    }
+}
+
 - (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object
 {
 	assert(object != nil); // Must have a valid ReaderDocument
@@ -83,7 +110,7 @@
 
 #if (READER_STANDALONE == FALSE) // Option
 
-		UIButton *doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 		doneButton.frame = CGRectMake(leftButtonX, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
@@ -111,7 +138,7 @@
 
 #if (READER_ENABLE_THUMBS == TRUE) // Option
 
-		UIButton *thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 		thumbsButton.frame = CGRectMake(leftButtonX, BUTTON_Y, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[thumbsButton addTarget:self action:@selector(thumbsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -142,41 +169,13 @@
 
 		rightButtonX -= (MARK_BUTTON_WIDTH + BUTTON_SPACE);
 
-		UIButton *flagButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		flagButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 		flagButton.frame = CGRectMake(rightButtonX, BUTTON_Y, MARK_BUTTON_WIDTH, BUTTON_HEIGHT);
 		//[flagButton setImage:[UIImage imageNamed:@"Reader-Mark-N"] forState:UIControlStateNormal];
 		[flagButton addTarget:self action:@selector(markButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-            markImageN = [self imageNamed:@"Reader-Mark-N" withColor:self.tintColor]; // N image
-            
-            UIImage *img = [UIImage imageNamed:@"Reader-Mark-Y" ]; // Y image
-            
-            CGSize size = CGSizeMake(32, 32);
-            // begin a new image context, to draw our colored image onto
-            UIGraphicsBeginImageContextWithOptions(size, NO, 2.0);
-            
-            // get a reference to that context we created
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            
-            CGRect rect = CGRectMake(0, 0, size.width, size.height);
-            CGContextScaleCTM(context, 1, -1);
-            CGContextTranslateCTM(context, 0, -rect.size.height);
-            
-            float radius = 4.0f;
-            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(1, 1, rect.size.width-2, rect.size.height-2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
-            [self.tintColor setStroke];
-            [path stroke];
-
-            CGImageRef maskImage = [img CGImage];
-            CGContextClipToMask(context, CGRectMake(size.width/2-img.size.width/2, size.height/2-img.size.height/2, img.size.width, img.size.height), maskImage);
-            
-            [self.tintColor setFill];
-            CGContextFillRect(context, rect);
-            
-            // generate a new UIImage from the graphics context we drew onto
-            markImageY = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
+            [self setFlagButtonIos7Image];
         }
         else{
             [flagButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
@@ -203,7 +202,7 @@
 			{
 				rightButtonX -= (EMAIL_BUTTON_WIDTH + BUTTON_SPACE);
 
-				UIButton *emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
+				emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 				emailButton.frame = CGRectMake(rightButtonX, BUTTON_Y, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
 				[emailButton addTarget:self action:@selector(emailButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -234,7 +233,7 @@
 			{
 				rightButtonX -= (PRINT_BUTTON_WIDTH + BUTTON_SPACE);
 
-				UIButton *printButton = [UIButton buttonWithType:UIButtonTypeCustom];
+				printButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 				printButton.frame = CGRectMake(rightButtonX, BUTTON_Y, PRINT_BUTTON_WIDTH, BUTTON_HEIGHT);
                 if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
@@ -279,6 +278,38 @@
 	}
 
 	return self;
+}
+
+-(void)setFlagButtonIos7Image
+{
+    UIImage *img = [UIImage imageNamed:@"Reader-Mark-Y" ]; // Y image
+    
+    markImageN = [self imageNamed:@"Reader-Mark-N" withColor:self.tintColor]; // N image
+    CGSize size = CGSizeMake(32, 32);
+    // begin a new image context, to draw our colored image onto
+    UIGraphicsBeginImageContextWithOptions(size, NO, 2.0);
+    
+    // get a reference to that context we created
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -rect.size.height);
+    
+    float radius = 4.0f;
+    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(1, 1, rect.size.width-2, rect.size.height-2) byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(radius, radius)];
+    [self.tintColor setStroke];
+    [path stroke];
+    
+    CGImageRef maskImage = [img CGImage];
+    CGContextClipToMask(context, CGRectMake(size.width/2-img.size.width/2, size.height/2-img.size.height/2, img.size.width, img.size.height), maskImage);
+    
+    [self.tintColor setFill];
+    CGContextFillRect(context, rect);
+    
+    // generate a new UIImage from the graphics context we drew onto
+    markImageY = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
 }
 
 -(UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color {

@@ -46,6 +46,8 @@
 @property (nonatomic, weak, readwrite) id <ThumbsViewControllerDelegate> delegate;
 
 - (id)initWithReaderDocument:(ReaderDocument *)object;
+- (void)setBarTintColor:(UIColor *)color;
+- (void)setTintColor:(UIColor *)color;
 
 @end
 

@@ -40,6 +40,8 @@
 	ReaderDocument *document;
 
 	ThumbsMainToolbar *mainToolbar;
+    UIColor *barsTintColor;
+    UIColor *tintColor;
 
 	ReaderThumbsView *theThumbsView;
 
@@ -86,6 +88,16 @@
 	return thumbs;
 }
 
+- (void)setBarTintColor:(UIColor *)color
+{
+    barsTintColor = color;
+}
+
+- (void)setTintColor:(UIColor *)color
+{
+    tintColor = color;
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -122,7 +134,10 @@
 
 	CGRect toolbarRect = scrollViewRect; // Toolbar frame
 	toolbarRect.size.height = TOOLBAR_HEIGHT; // Default toolbar height
-	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle]; // ThumbsMainToolbar
+	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle tintColor:tintColor]; // ThumbsMainToolbar
+    if (barsTintColor != nil) {
+        mainToolbar.backgroundColor = barsTintColor;
+    }
 	mainToolbar.delegate = self; // ThumbsMainToolbarDelegate
 	[self.view addSubview:mainToolbar];
 

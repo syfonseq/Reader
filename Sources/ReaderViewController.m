@@ -320,10 +320,25 @@
     }
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqual:@"tintColor"]) {
+        if (mainToolbar != nil) {
+            mainToolbar.tintColor = self.view.tintColor;
+        }
+        if (mainPagebar != nil) {
+            mainPagebar.tintColor = self.view.tintColor;
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-
+    
+    [self.view addObserver:self forKeyPath:@"tintColor" options:NSKeyValueObservingOptionOld context:NULL];
+    
 	assert(document != nil); // Must have a valid ReaderDocument
 
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
@@ -456,6 +471,8 @@
 	theScrollView = nil; contentViews = nil; lastHideTime = nil;
 
 	lastAppearSize = CGSizeZero; currentPage = 0;
+    
+    [self.view removeObserver:self forKeyPath:@"tintColor"];
 
 	[super viewDidUnload];
 }
@@ -796,6 +813,9 @@
 
 	ThumbsViewController *thumbsViewController = [[ThumbsViewController alloc] initWithReaderDocument:document];
 
+    [thumbsViewController setBarTintColor:barsTintColor];
+    [thumbsViewController setTintColor:self.view.tintColor];
+    
 	thumbsViewController.delegate = self; thumbsViewController.title = self.title;
 
 	thumbsViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;

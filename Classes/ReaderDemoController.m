@@ -182,6 +182,9 @@
 	{
 		ReaderViewController *readerViewController = [[ReaderViewController alloc] initWithReaderDocument:document];
 
+        [readerViewController setBarTintColor:[UIColor colorWithRed:0.1 green:0.3 blue:0.8 alpha:0.9]];
+        readerViewController.view.tintColor = [UIColor colorWithWhite:1 alpha:1];
+        
 		readerViewController.delegate = self; // Set the ReaderViewController delegate to self
 
 #if (DEMO_VIEW_CONTROLLER_PUSH == TRUE)

@@ -27,6 +27,9 @@
 #import "ThumbsMainToolbar.h"
 
 @implementation ThumbsMainToolbar
+{
+    UIButton *doneButton;
+}
 
 #pragma mark Constants
 
@@ -48,10 +51,10 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-	return [self initWithFrame:frame title:nil];
+	return [self initWithFrame:frame title:nil tintColor:nil];
 }
 
-- (id)initWithFrame:(CGRect)frame title:(NSString *)title
+- (id)initWithFrame:(CGRect)frame title:(NSString *)title tintColor:(UIColor*)tintColor
 {
 	if ((self = [super initWithFrame:frame]))
 	{
@@ -65,12 +68,15 @@
 
 		CGFloat titleX = BUTTON_X; CGFloat titleWidth = (viewWidth - (titleX + titleX));
 
-		UIButton *doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
 		doneButton.frame = CGRectMake(BUTTON_X, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
 		[doneButton addTarget:self action:@selector(doneButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            if (tintColor != nil) {
+                self.tintColor = tintColor;
+            }
             [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
             [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
             doneButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
