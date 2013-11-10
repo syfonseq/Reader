@@ -68,9 +68,14 @@
 
 		CGFloat titleX = BUTTON_X; CGFloat titleWidth = (viewWidth - (titleX + titleX));
 
+        CGFloat buttonY = BUTTON_Y;
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            buttonY += 20.0f;
+        }
+        
 		doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-		doneButton.frame = CGRectMake(BUTTON_X, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
+		doneButton.frame = CGRectMake(BUTTON_X, buttonY, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
 		[doneButton addTarget:self action:@selector(doneButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
@@ -107,7 +112,7 @@
 
 		UISegmentedControl *showControl = [[UISegmentedControl alloc] initWithItems:buttonItems];
 
-		showControl.frame = CGRectMake(showControlX, BUTTON_Y, SHOW_CONTROL_WIDTH, BUTTON_HEIGHT);
+		showControl.frame = CGRectMake(showControlX, buttonY, SHOW_CONTROL_WIDTH, BUTTON_HEIGHT);
         if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0f) {
             showControl.tintColor = (useTint ? [UIColor blackColor] : [UIColor colorWithWhite:0.8f alpha:1.0f]);
         }
@@ -126,7 +131,7 @@
 
 		if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 		{
-			CGRect titleRect = CGRectMake(titleX, BUTTON_Y, titleWidth, TITLE_HEIGHT);
+			CGRect titleRect = CGRectMake(titleX, buttonY, titleWidth, TITLE_HEIGHT);
 
 			UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleRect];
 

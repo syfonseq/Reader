@@ -46,7 +46,7 @@
 
 @property (nonatomic, weak, readwrite) id <ReaderMainToolbarDelegate> delegate;
 
-- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object;
+- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object showBackButtonInsteadOfDone:(BOOL)showBackButtonInsteadOfDone;
 
 - (void)setBookmarkState:(BOOL)state;
 

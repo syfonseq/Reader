@@ -66,7 +66,7 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-	return [self initWithFrame:frame document:nil];
+	return [self initWithFrame:frame document:nil showBackButtonInsteadOfDone:NO];
 }
 
 - (void)setTintColor:(UIColor *)tintColor
@@ -90,7 +90,7 @@
     }
 }
 
-- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object
+- (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object showBackButtonInsteadOfDone:(BOOL)showBackButtonInsteadOfDone
 {
 	assert(object != nil); // Must have a valid ReaderDocument
 
@@ -106,60 +106,53 @@
 
 		CGFloat titleX = BUTTON_X; CGFloat titleWidth = (viewWidth - (titleX + titleX));
 
-		CGFloat leftButtonX = BUTTON_X; // Left button start X position
-
+        CGFloat buttonY = BUTTON_Y;
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            buttonY += 20.0f;
+        }
+        
 #if (READER_STANDALONE == FALSE) // Option
 
 		doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-		doneButton.frame = CGRectMake(leftButtonX, BUTTON_Y, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
-		[doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-            [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
-            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
-            doneButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        }
-        else{
-            [doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
-            [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
-            [doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-            [doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
-            doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+        if (showBackButtonInsteadOfDone) {
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+                UIImage *backImage = [self imageNamed:@"Reader-Back" withColor:self.tintColor];
+                [doneButton setImage:backImage forState:UIControlStateNormal];
+                doneButton.frame = CGRectMake(BUTTON_X, buttonY, backImage.size.width, BUTTON_HEIGHT);
+            } else {
+                [doneButton setImage:[UIImage imageNamed:@"Reader-Back"] forState:UIControlStateNormal];
+                doneButton.frame = CGRectMake(BUTTON_X, buttonY, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
+                [doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+                [doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+            }
+        } else {
+            doneButton.frame = CGRectMake(BUTTON_X, buttonY, DONE_BUTTON_WIDTH, BUTTON_HEIGHT);
+            [doneButton setTitle:NSLocalizedString(@"Done", @"button") forState:UIControlStateNormal];
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+                [doneButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+                [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+                doneButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+            }
+            else{
+                [doneButton setTitleColor:[UIColor colorWithWhite:0.0f alpha:1.0f] forState:UIControlStateNormal];
+                [doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:1.0f] forState:UIControlStateHighlighted];
+                [doneButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+                [doneButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+                doneButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+            }
         }
 		[doneButton addTarget:self action:@selector(doneButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
 		doneButton.autoresizingMask = UIViewAutoresizingNone;
 		doneButton.exclusiveTouch = YES;
 
-		[self addSubview:doneButton]; leftButtonX += (DONE_BUTTON_WIDTH + BUTTON_SPACE);
+		[self addSubview:doneButton];
 
 		titleX += (DONE_BUTTON_WIDTH + BUTTON_SPACE); titleWidth -= (DONE_BUTTON_WIDTH + BUTTON_SPACE);
 
 #endif // end of READER_STANDALONE Option
 
-#if (READER_ENABLE_THUMBS == TRUE) // Option
-
-		thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-
-		thumbsButton.frame = CGRectMake(leftButtonX, BUTTON_Y, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
-		[thumbsButton addTarget:self action:@selector(thumbsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-            [thumbsButton setImage:[self imageNamed:@"Reader-Thumbs"withColor:self.tintColor] forState:UIControlStateNormal];
-        }
-        else{
-            [thumbsButton setImage:[UIImage imageNamed:@"Reader-Thumbs"] forState:UIControlStateNormal];
-            [thumbsButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-            [thumbsButton setBackgroundImage:buttonN forState:UIControlStateNormal];
-        }
-		thumbsButton.autoresizingMask = UIViewAutoresizingNone;
-		thumbsButton.exclusiveTouch = YES;
-
-		[self addSubview:thumbsButton]; //leftButtonX += (THUMBS_BUTTON_WIDTH + BUTTON_SPACE);
-
-		titleX += (THUMBS_BUTTON_WIDTH + BUTTON_SPACE); titleWidth -= (THUMBS_BUTTON_WIDTH + BUTTON_SPACE);
-
-#endif // end of READER_ENABLE_THUMBS Option
-
-#if (READER_BOOKMARKS == TRUE || READER_ENABLE_MAIL == TRUE || READER_ENABLE_PRINT == TRUE)
+#if (READER_ENABLE_THUMBS == TRUE || READER_BOOKMARKS == TRUE || READER_ENABLE_MAIL == TRUE || READER_ENABLE_PRINT == TRUE)
 
 		CGFloat rightButtonX = viewWidth; // Right button start X position
 
@@ -171,7 +164,7 @@
 
 		flagButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-		flagButton.frame = CGRectMake(rightButtonX, BUTTON_Y, MARK_BUTTON_WIDTH, BUTTON_HEIGHT);
+		flagButton.frame = CGRectMake(rightButtonX, buttonY, MARK_BUTTON_WIDTH, BUTTON_HEIGHT);
 		//[flagButton setImage:[UIImage imageNamed:@"Reader-Mark-N"] forState:UIControlStateNormal];
 		[flagButton addTarget:self action:@selector(markButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
@@ -204,7 +197,7 @@
 
 				emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-				emailButton.frame = CGRectMake(rightButtonX, BUTTON_Y, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
+				emailButton.frame = CGRectMake(rightButtonX, buttonY, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
 				[emailButton addTarget:self action:@selector(emailButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
                 if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
                     [emailButton setImage:[self imageNamed:@"Reader-Email" withColor:self.tintColor] forState:UIControlStateNormal];
@@ -235,7 +228,7 @@
 
 				printButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-				printButton.frame = CGRectMake(rightButtonX, BUTTON_Y, PRINT_BUTTON_WIDTH, BUTTON_HEIGHT);
+				printButton.frame = CGRectMake(rightButtonX, buttonY, PRINT_BUTTON_WIDTH, BUTTON_HEIGHT);
                 if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
                     [printButton setImage:[self imageNamed:@"Reader-Print"withColor:self.tintColor] forState:UIControlStateNormal];
                 }
@@ -255,9 +248,34 @@
 
 #endif // end of READER_ENABLE_PRINT Option
 
+#if (READER_ENABLE_THUMBS == TRUE) // Option
+        
+        rightButtonX -= (THUMBS_BUTTON_WIDTH + BUTTON_SPACE);
+        
+		thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+		thumbsButton.frame = CGRectMake(rightButtonX, buttonY, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
+		[thumbsButton addTarget:self action:@selector(thumbsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [thumbsButton setImage:[self imageNamed:@"Reader-Thumbs"withColor:self.tintColor] forState:UIControlStateNormal];
+        }
+        else{
+            [thumbsButton setImage:[UIImage imageNamed:@"Reader-Thumbs"] forState:UIControlStateNormal];
+            [thumbsButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [thumbsButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        }
+		thumbsButton.autoresizingMask = UIViewAutoresizingNone;
+		thumbsButton.exclusiveTouch = YES;
+        
+		[self addSubview:thumbsButton]; //leftButtonX += (THUMBS_BUTTON_WIDTH + BUTTON_SPACE);
+        
+		titleX += (THUMBS_BUTTON_WIDTH + BUTTON_SPACE); titleWidth -= (THUMBS_BUTTON_WIDTH + BUTTON_SPACE);
+        
+#endif // end of READER_ENABLE_THUMBS Option
+        
 		if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 		{
-			CGRect titleRect = CGRectMake(titleX, BUTTON_Y, titleWidth, TITLE_HEIGHT);
+			CGRect titleRect = CGRectMake(titleX, buttonY, titleWidth, TITLE_HEIGHT);
 
 			UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleRect];
 

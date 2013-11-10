@@ -48,6 +48,8 @@
 
 	ReaderMainPagebar *mainPagebar;
     
+    UIView *fakeStatusBar;
+    
     UIColor *barsTintColor;
 
 	NSMutableDictionary *contentViews;
@@ -318,6 +320,9 @@
     if (mainToolbar != nil){
         mainToolbar.backgroundColor = color;
     }
+    if (fakeStatusBar != nil) {
+        fakeStatusBar.backgroundColor = barsTintColor;
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -348,23 +353,7 @@
         self.view.backgroundColor = [UIColor grayColor]; // Neutral gray
     }
 
-	CGRect scrollViewRect = self.view.bounds; UIView *fakeStatusBar = nil;
-
-	if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) // iOS 7+
-	{
-		if ([self prefersStatusBarHidden] == NO) // Visible status bar
-		{
-			CGRect statusBarRect = self.view.bounds; // Status bar frame
-			statusBarRect.size.height = STATUS_HEIGHT; // Default status height
-			fakeStatusBar = [[UIView alloc] initWithFrame:statusBarRect]; // UIView
-			fakeStatusBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-			fakeStatusBar.backgroundColor = [UIColor blackColor];
-			fakeStatusBar.contentMode = UIViewContentModeRedraw;
-			fakeStatusBar.userInteractionEnabled = NO;
-
-			scrollViewRect.origin.y += STATUS_HEIGHT; scrollViewRect.size.height -= STATUS_HEIGHT;
-		}
-	}
+	CGRect scrollViewRect = self.view.bounds;
 
 	theScrollView = [[UIScrollView alloc] initWithFrame:scrollViewRect]; // UIScrollView
 	theScrollView.autoresizesSubviews = NO; theScrollView.contentMode = UIViewContentModeRedraw;
@@ -376,7 +365,10 @@
 
 	CGRect toolbarRect = scrollViewRect; // Toolbar frame
 	toolbarRect.size.height = TOOLBAR_HEIGHT; // Default toolbar height
-	mainToolbar = [[ReaderMainToolbar alloc] initWithFrame:toolbarRect document:document]; // ReaderMainToolbar
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        toolbarRect.size.height += STATUS_HEIGHT;
+    }
+	mainToolbar = [[ReaderMainToolbar alloc] initWithFrame:toolbarRect document:document showBackButtonInsteadOfDone:self.navigationController != nil]; // ReaderMainToolbar
 	mainToolbar.delegate = self; // ReaderMainToolbarDelegate
 	[self.view addSubview:mainToolbar];
 
@@ -479,12 +471,20 @@
 
 - (BOOL)prefersStatusBarHidden
 {
-	return YES;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        return NO;
+    } else {
+        return YES;
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-	return UIStatusBarStyleLightContent;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        return UIStatusBarStyleDefault;
+    } else {
+        return UIStatusBarStyleLightContent;
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -814,7 +814,9 @@
 	ThumbsViewController *thumbsViewController = [[ThumbsViewController alloc] initWithReaderDocument:document];
 
     [thumbsViewController setBarTintColor:barsTintColor];
-    [thumbsViewController setTintColor:self.view.tintColor];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        [thumbsViewController setTintColor:self.view.tintColor];
+    }
     
 	thumbsViewController.delegate = self; thumbsViewController.title = self.title;
 

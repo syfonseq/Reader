@@ -114,26 +114,13 @@
 
 	CGRect scrollViewRect = self.view.bounds; UIView *fakeStatusBar = nil;
 
-	if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) // iOS 7+
-	{
-		if ([self prefersStatusBarHidden] == NO) // Visible status bar
-		{
-			CGRect statusBarRect = self.view.bounds; // Status bar frame
-			statusBarRect.size.height = STATUS_HEIGHT; // Default status height
-			fakeStatusBar = [[UIView alloc] initWithFrame:statusBarRect]; // UIView
-			fakeStatusBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-			fakeStatusBar.backgroundColor = [UIColor blackColor];
-			fakeStatusBar.contentMode = UIViewContentModeRedraw;
-			fakeStatusBar.userInteractionEnabled = NO;
-
-			scrollViewRect.origin.y += STATUS_HEIGHT; scrollViewRect.size.height -= STATUS_HEIGHT;
-		}
-	}
-
 	NSString *toolbarTitle = [document.fileName stringByDeletingPathExtension];
 
 	CGRect toolbarRect = scrollViewRect; // Toolbar frame
 	toolbarRect.size.height = TOOLBAR_HEIGHT; // Default toolbar height
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        toolbarRect.size.height += STATUS_HEIGHT;
+    }
 	mainToolbar = [[ThumbsMainToolbar alloc] initWithFrame:toolbarRect title:toolbarTitle tintColor:tintColor]; // ThumbsMainToolbar
     if (barsTintColor != nil) {
         mainToolbar.backgroundColor = barsTintColor;
@@ -147,11 +134,11 @@
 
 	if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) // iPad
 	{
-		scrollViewRect.origin.y += TOOLBAR_HEIGHT; scrollViewRect.size.height -= TOOLBAR_HEIGHT;
+		scrollViewRect.origin.y += toolbarRect.size.height; scrollViewRect.size.height -= toolbarRect.size.height;
 	}
 	else // Set UIScrollView insets for non-UIUserInterfaceIdiomPad case
 	{
-		scrollViewInsets.top = TOOLBAR_HEIGHT;
+		scrollViewInsets.top = toolbarRect.size.height;
 	}
 
 	theThumbsView = [[ReaderThumbsView alloc] initWithFrame:scrollViewRect]; // ReaderThumbsView
@@ -199,12 +186,20 @@
 
 - (BOOL)prefersStatusBarHidden
 {
-	return YES;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        return NO;
+    } else {
+        return YES;
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-	return UIStatusBarStyleLightContent;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+        return UIStatusBarStyleDefault;
+    } else {
+        return UIStatusBarStyleLightContent;
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
