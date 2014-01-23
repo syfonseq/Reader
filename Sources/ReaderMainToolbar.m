@@ -106,6 +106,8 @@
 
 		CGFloat titleX = BUTTON_X; CGFloat titleWidth = (viewWidth - (titleX + titleX));
 
+        CGFloat leftButtonX = BUTTON_X; // Left button start X position
+
         CGFloat buttonY = BUTTON_Y;
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
             buttonY += 20.0f;
@@ -146,7 +148,7 @@
 		doneButton.autoresizingMask = UIViewAutoresizingNone;
 		doneButton.exclusiveTouch = YES;
 
-		[self addSubview:doneButton];
+        [self addSubview:doneButton]; leftButtonX += (doneButton.bounds.size.width + BUTTON_SPACE);
 
 		titleX += (DONE_BUTTON_WIDTH + BUTTON_SPACE); titleWidth -= (DONE_BUTTON_WIDTH + BUTTON_SPACE);
 
@@ -254,7 +256,7 @@
         
 		thumbsButton = [UIButton buttonWithType:UIButtonTypeCustom];
         
-		thumbsButton.frame = CGRectMake(rightButtonX, buttonY, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
+		thumbsButton.frame = CGRectMake(leftButtonX, buttonY, THUMBS_BUTTON_WIDTH, BUTTON_HEIGHT);
 		[thumbsButton addTarget:self action:@selector(thumbsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
             [thumbsButton setImage:[self imageNamed:@"Reader-Thumbs"withColor:self.tintColor] forState:UIControlStateNormal];
@@ -275,7 +277,7 @@
         
 		if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 		{
-			CGRect titleRect = CGRectMake(titleX, buttonY, titleWidth, TITLE_HEIGHT);
+			CGRect titleRect = CGRectMake(titleX, buttonY, viewWidth-2*titleX, TITLE_HEIGHT);
 
 			UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleRect];
 
