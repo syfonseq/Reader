@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0898CC0D189178D900F0D8C8 /* Reader-OpenWith.png in Resources */ = {isa = PBXBuildFile; fileRef = 0898CC0B189178D900F0D8C8 /* Reader-OpenWith.png */; };
-		0898CC0E189178D900F0D8C8 /* Reader-OpenWith@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0898CC0C189178D900F0D8C8 /* Reader-OpenWith@2x.png */; };
+		0898CC1118917E1F00F0D8C8 /* Reader-OpenWith.png in Resources */ = {isa = PBXBuildFile; fileRef = 0898CC0F18917E1F00F0D8C8 /* Reader-OpenWith.png */; };
+		0898CC1218917E1F00F0D8C8 /* Reader-OpenWith@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -71,8 +71,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0898CC0B189178D900F0D8C8 /* Reader-OpenWith.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reader-OpenWith.png"; sourceTree = "<group>"; };
-		0898CC0C189178D900F0D8C8 /* Reader-OpenWith@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reader-OpenWith@2x.png"; sourceTree = "<group>"; };
+		0898CC0F18917E1F00F0D8C8 /* Reader-OpenWith.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-OpenWith.png"; path = "Graphics/Reader-OpenWith.png"; sourceTree = "<group>"; };
+		0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-OpenWith@2x.png"; path = "Graphics/Reader-OpenWith@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -300,8 +300,8 @@
 				45AB72C3141FBFCA003524C3 /* Reader-Print@2x.png */,
 				45AB72C4141FBFCA003524C3 /* Reader-Thumbs.png */,
 				45AB72C5141FBFCA003524C3 /* Reader-Thumbs@2x.png */,
-				0898CC0B189178D900F0D8C8 /* Reader-OpenWith.png */,
-				0898CC0C189178D900F0D8C8 /* Reader-OpenWith@2x.png */,
+				0898CC0F18917E1F00F0D8C8 /* Reader-OpenWith.png */,
+				0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */,
 			);
 			name = Reader;
 			sourceTree = "<group>";
@@ -434,9 +434,9 @@
 				455C789D14268F6A0053D73B /* Reader-Button-H.png in Resources */,
 				455C789E14268F6A0053D73B /* Reader-Button-H@2x.png in Resources */,
 				455C789F14268F6A0053D73B /* Reader-Button-N.png in Resources */,
-				0898CC0D189178D900F0D8C8 /* Reader-OpenWith.png in Resources */,
+				0898CC1118917E1F00F0D8C8 /* Reader-OpenWith.png in Resources */,
 				455C78A014268F6A0053D73B /* Reader-Button-N@2x.png in Resources */,
-				0898CC0E189178D900F0D8C8 /* Reader-OpenWith@2x.png in Resources */,
+				0898CC1218917E1F00F0D8C8 /* Reader-OpenWith@2x.png in Resources */,
 				4583767F1533B0AC003CD230 /* AppIcon-144.png in Resources */,
 				4544394917FDD5E700781873 /* AppIcon-120.png in Resources */,
 				4544D87C1610A3C2003DB132 /* Default-568h@2x.png in Resources */,
