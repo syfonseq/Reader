@@ -35,7 +35,11 @@
 #import <MessageUI/MessageUI.h>
 
 @interface ReaderViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate,
-									ReaderMainToolbarDelegate, ReaderMainPagebarDelegate, ReaderContentViewDelegate, ThumbsViewControllerDelegate>
+									ReaderMainToolbarDelegate, ReaderMainPagebarDelegate, ReaderContentViewDelegate, ThumbsViewControllerDelegate, UIDocumentInteractionControllerDelegate>
+
+
+@property (nonatomic, strong) UIDocumentInteractionController * docController;
+
 @end
 
 @implementation ReaderViewController
@@ -928,6 +932,30 @@
 	{
 		[mainToolbar setBookmarkState:YES]; [document.bookmarks addIndex:page];
 	}
+}
+
+- (void)tappedInToolbar:(ReaderMainToolbar *)toolbar openWithButton:(UIButton *)button
+{
+#if (READER_ENABLE_OPENWITH == TRUE) // Option
+    self.docController = [UIDocumentInteractionController interactionControllerWithURL:document.fileURL];
+    self.docController.delegate = self;
+
+    if ( ! [self.docController presentOpenInMenuFromRect:button.frame inView:mainToolbar animated:YES]) {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Erreur", @"") message:NSLocalizedString(@"Aucune autre application disponible pour ouvrir ce document", @"") delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
+        [alert show];
+    }
+#endif // end of READER_ENABLE_OPENWITH Option
+}
+
+#pragma mark - UIDocumentInteractionDelegate methods
+
+- (UIViewController *) documentInteractionControllerViewControllerForPreview: (UIDocumentInteractionController *) controller {
+    return self;
+}
+
+- (void) documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller
+{
+    self.docController = nil;
 }
 
 #pragma mark MFMailComposeViewControllerDelegate methods

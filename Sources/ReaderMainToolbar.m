@@ -41,6 +41,7 @@
     UIButton *flagButton;
     UIButton *emailButton;
     UIButton *printButton;
+    UIButton *openWithButton;
 }
 
 #pragma mark Constants
@@ -55,6 +56,8 @@
 #define PRINT_BUTTON_WIDTH 40.0f
 #define EMAIL_BUTTON_WIDTH 40.0f
 #define MARK_BUTTON_WIDTH 40.0f
+#define OPENWITH_BUTTON_WIDTH 40.0f
+
 
 #define TITLE_HEIGHT 28.0f
 
@@ -87,6 +90,9 @@
     }
     if (printButton != nil) {
         [printButton setImage:[self imageNamed:@"Reader-Print"withColor:self.tintColor] forState:UIControlStateNormal];
+    }
+    if (openWithButton != nil) {
+        [openWithButton setImage:[self imageNamed:@"Reader-OpenWith"withColor:self.tintColor] forState:UIControlStateNormal];
     }
 }
 
@@ -186,6 +192,29 @@
 		markButton = flagButton; markButton.enabled = NO; markButton.tag = NSIntegerMin;
 
 #endif // end of READER_BOOKMARKS Option
+
+#if (READER_ENABLE_OPENWITH == TRUE) // Option
+
+        rightButtonX -= (OPENWITH_BUTTON_WIDTH + BUTTON_SPACE);
+
+        openWithButton = [UIButton buttonWithType:UIButtonTypeCustom];
+
+        openWithButton.frame = CGRectMake(rightButtonX, buttonY, OPENWITH_BUTTON_WIDTH, BUTTON_HEIGHT);
+        [openWithButton addTarget:self action:@selector(openwithButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [openWithButton setImage:[self imageNamed:@"Reader-OpenWith" withColor:self.tintColor] forState:UIControlStateNormal];
+        }
+        else{
+            [openWithButton setImage:[UIImage imageNamed:@"Reader-OpenWith"] forState:UIControlStateNormal];
+            [openWithButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [openWithButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        }
+        openWithButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        openWithButton.exclusiveTouch = YES;
+
+        [self addSubview:openWithButton]; titleWidth -= (OPENWITH_BUTTON_WIDTH + BUTTON_SPACE);
+
+#endif // end of READER_ENABLE_OPENWITH Option
 
 #if (READER_ENABLE_MAIL == TRUE) // Option
 
@@ -462,5 +491,11 @@
 {
 	[delegate tappedInToolbar:self markButton:button];
 }
+
+- (void)openwithButtonTapped:(UIButton *)button
+{
+	[delegate tappedInToolbar:self openWithButton:button];
+}
+
 
 @end
