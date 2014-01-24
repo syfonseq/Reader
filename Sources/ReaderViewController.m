@@ -536,6 +536,7 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.view removeObserver:self forKeyPath:@"tintColor"];
 }
 
 #pragma mark UIScrollViewDelegate methods
