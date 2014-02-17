@@ -39,5 +39,6 @@
 #define READER_DISABLE_IDLE TRUE
 #define READER_SHOW_SHADOWS TRUE
 #define READER_STANDALONE FALSE
+#define READER_SHOW_TITLE TRUE
 
 extern NSString *const kReaderCopyrightNotice;
