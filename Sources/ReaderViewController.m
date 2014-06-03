@@ -948,6 +948,15 @@
 #endif // end of READER_ENABLE_OPENWITH Option
 }
 
+- (void)tappedInToolbar:(ReaderMainToolbar *)toolbar cartButton:(UIButton *)button
+{
+#if (READER_ENABLE_CART == TRUE) // Option
+    if (self.cartButtonActionBlock) {
+        self.cartButtonActionBlock();
+    }
+#endif // end of READER_ENABLE_OPENWITH Option
+}
+
 #pragma mark - UIDocumentInteractionDelegate methods
 
 - (UIViewController *) documentInteractionControllerViewControllerForPreview: (UIDocumentInteractionController *) controller {

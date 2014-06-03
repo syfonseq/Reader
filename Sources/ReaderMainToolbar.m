@@ -42,6 +42,7 @@
     UIButton *emailButton;
     UIButton *printButton;
     UIButton *openWithButton;
+    UIButton *cartButton;
 }
 
 #pragma mark Constants
@@ -57,6 +58,7 @@
 #define EMAIL_BUTTON_WIDTH 40.0f
 #define MARK_BUTTON_WIDTH 40.0f
 #define OPENWITH_BUTTON_WIDTH 40.0f
+#define CART_BUTTON_WIDTH 40.0f
 
 
 #define TITLE_HEIGHT 28.0f
@@ -192,6 +194,31 @@
 		markButton = flagButton; markButton.enabled = NO; markButton.tag = NSIntegerMin;
 
 #endif // end of READER_BOOKMARKS Option
+
+
+#if (READER_ENABLE_CART == TRUE) // Option
+
+        rightButtonX -= (CART_BUTTON_WIDTH + BUTTON_SPACE);
+
+        cartButton = [UIButton buttonWithType:UIButtonTypeCustom];
+
+        cartButton.frame = CGRectMake(rightButtonX, buttonY, CART_BUTTON_WIDTH, BUTTON_HEIGHT);
+        [cartButton addTarget:self action:@selector(cartButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [cartButton setImage:[self imageNamed:@"Reader-Cart" withColor:self.tintColor] forState:UIControlStateNormal];
+        }
+        else{
+            [cartButton setImage:[UIImage imageNamed:@"Reader-Cart"] forState:UIControlStateNormal];
+            [cartButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [cartButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        }
+        cartButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        cartButton.exclusiveTouch = YES;
+
+        [self addSubview:cartButton]; titleWidth -= (CART_BUTTON_WIDTH + BUTTON_SPACE);
+
+#endif // end of READER_ENABLE_CART Option
+
 
 #if (READER_ENABLE_OPENWITH == TRUE) // Option
 
@@ -498,6 +525,11 @@
 - (void)openwithButtonTapped:(UIButton *)button
 {
 	[delegate tappedInToolbar:self openWithButton:button];
+}
+
+- (void)cartButtonTapped:(UIButton *)button
+{
+	[delegate tappedInToolbar:self cartButton:button];
 }
 
 

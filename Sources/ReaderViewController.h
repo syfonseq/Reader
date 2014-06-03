@@ -40,6 +40,7 @@
 @interface ReaderViewController : UIViewController
 
 @property (nonatomic, weak, readwrite) id <ReaderViewControllerDelegate> delegate;
+@property (nonatomic, copy) void (^cartButtonActionBlock)();
 
 - (id)initWithReaderDocument:(ReaderDocument *)object;
 - (void)setBarTintColor:(UIColor *)color;

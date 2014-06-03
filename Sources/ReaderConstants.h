@@ -41,4 +41,6 @@
 #define READER_STANDALONE FALSE
 #define READER_SHOW_TITLE FALSE
 
+#define READER_ENABLE_CART FALSE
+
 extern NSString *const kReaderCopyrightNotice;
