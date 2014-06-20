@@ -41,6 +41,7 @@
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar markButton:(UIButton *)button;
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar openWithButton:(UIButton *)button;
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar cartButton:(UIButton *)button;
+- (void)tappedInToolbar:(ReaderMainToolbar *)toolbar pageSelectionButton:(UIButton *)button;
 
 @end
 
@@ -51,6 +52,7 @@
 - (id)initWithFrame:(CGRect)frame document:(ReaderDocument *)object showBackButtonInsteadOfDone:(BOOL)showBackButtonInsteadOfDone;
 
 - (void)setBookmarkState:(BOOL)state;
+- (void)setSelectedPageState: (BOOL)pageIsSelected;
 
 - (void)hideToolbar;
 - (void)showToolbar;

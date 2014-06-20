@@ -35,10 +35,12 @@
 #import <MessageUI/MessageUI.h>
 
 @interface ReaderViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate,
-									ReaderMainToolbarDelegate, ReaderMainPagebarDelegate, ReaderContentViewDelegate, ThumbsViewControllerDelegate, UIDocumentInteractionControllerDelegate>
+									ReaderMainToolbarDelegate, ReaderMainPagebarDelegate, ReaderContentViewDelegate, ThumbsViewControllerDelegate, UIDocumentInteractionControllerDelegate, UIActionSheetDelegate>
 
 
 @property (nonatomic, strong) UIDocumentInteractionController * docController;
+@property (nonatomic, strong) NSMutableSet * selectedPages;
+
 
 @end
 
@@ -272,6 +274,10 @@
 		[mainPagebar updatePagebar]; // Update the pagebar display
 
 		[self updateToolbarBookmarkIcon]; // Update bookmark
+
+#if READER_ENABLE_PAGE_SELECTION == TRUE
+        [self updatePageSelectionButtonState]; // Update page selection
+#endif
 
 		currentPage = page; // Track current page number
 	}
@@ -885,36 +891,29 @@
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar emailButton:(UIButton *)button
 {
-#if (READER_ENABLE_MAIL == TRUE) // Option
+#if (READER_ENABLE_MAIL == TRUE || READER_ENABLE_PAGE_SELECTION == TRUE) // Option
 
-	if ([MFMailComposeViewController canSendMail] == NO) return;
+    if (printInteraction != nil) [printInteraction dismissAnimated:YES];
 
-	if (printInteraction != nil) [printInteraction dismissAnimated:YES];
+    BOOL canSendMail = [self canSendMail];
 
-	unsigned long long fileSize = [document.fileSize unsignedLongLongValue];
+    // if this option is activated, the "email" button can have 2 behaviours:
+    // - send the whole document using the Mail builin interface
+    // - send the selected pages using a webservice
 
-	if (fileSize < (unsigned long long)15728640) // Check attachment size limit (15MB)
-	{
-		NSURL *fileURL = document.fileURL; NSString *fileName = document.fileName; // Document
+    if (canSendMail && READER_ENABLE_PAGE_SELECTION) {
+        UIActionSheet * mailActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Document complet", @""), NSLocalizedString(@"Seulement les pages sélectionnées", @""), nil];
+        [mailActionSheet showFromRect:button.frame inView:mainToolbar animated:YES];
+    }
+    // default behaviour of the email button
+    else if (canSendMail) {
+        [self sendByMail];
+    }
+    else {
+        [self sendSelectedPages];
+    }
 
-		NSData *attachment = [NSData dataWithContentsOfURL:fileURL options:(NSDataReadingMapped|NSDataReadingUncached) error:nil];
 
-		if (attachment != nil) // Ensure that we have valid document file attachment data
-		{
-			MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
-
-			[mailComposer addAttachmentData:attachment mimeType:@"application/pdf" fileName:fileName];
-
-			[mailComposer setSubject:fileName]; // Use the document file name for the subject
-
-			mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-			mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-
-			mailComposer.mailComposeDelegate = self; // Set the delegate
-
-			[self presentViewController:mailComposer animated:YES completion:NULL];
-		}
-	}
 
 #endif // end of READER_ENABLE_MAIL Option
 }
@@ -956,6 +955,101 @@
     }
 #endif // end of READER_ENABLE_OPENWITH Option
 }
+
+- (void)tappedInToolbar:(ReaderMainToolbar *)toolbar pageSelectionButton:(UIButton *)button
+{
+#if (READER_ENABLE_PAGE_SELECTION == TRUE) // Option
+
+    if ( ! self.selectedPages) {
+        self.selectedPages = [NSMutableSet set];
+    }
+
+    if (button.selected) {
+        [self.selectedPages removeObject:@(currentPage)];
+    }
+    else {
+        [self.selectedPages addObject:@(currentPage)];
+    }
+
+    // change the state of the button
+    button.selected = ! button.selected;
+
+
+#endif // end of READER_ENABLE_PAGE_SELECTION Option
+}
+
+
+#pragma mark - Mail stuff
+
+- (BOOL) canSendMail
+{
+    if ( ! READER_ENABLE_MAIL) {
+        return NO;
+    }
+
+    if ([MFMailComposeViewController canSendMail] == NO) return NO;
+
+    unsigned long long fileSize = [document.fileSize unsignedLongLongValue];
+    if (fileSize >= (unsigned long long)15728640) { // Check attachment size limit (15MB)
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void) sendByMail
+{
+    NSURL *fileURL = document.fileURL; NSString *fileName = document.fileName; // Document
+
+    NSData *attachment = [NSData dataWithContentsOfURL:fileURL options:(NSDataReadingMapped|NSDataReadingUncached) error:nil];
+
+    if (attachment != nil) // Ensure that we have valid document file attachment data
+    {
+        MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+
+        [mailComposer addAttachmentData:attachment mimeType:@"application/pdf" fileName:fileName];
+
+        [mailComposer setSubject:fileName]; // Use the document file name for the subject
+
+        mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+
+        mailComposer.mailComposeDelegate = self; // Set the delegate
+
+        [self presentViewController:mailComposer animated:YES completion:NULL];
+    }
+}
+
+#pragma mark - Page Selection stuff
+
+- (void) updatePageSelectionButtonState
+{
+    BOOL pageIsSelected = NO;
+    if ([self.selectedPages containsObject:document.pageNumber]) {
+        pageIsSelected = YES;
+    }
+
+    [mainToolbar setSelectedPageState:pageIsSelected];
+}
+
+// called by action sheet displayed after email button action
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == actionSheet.firstOtherButtonIndex) {
+        [self sendByMail];
+    }
+    else {
+        [self sendSelectedPages];
+    }
+}
+
+- (void) sendSelectedPages
+{
+    if (self.sendSelectedPagesActionBlock) {
+        self.sendSelectedPagesActionBlock(self.selectedPages);
+    }
+}
+
 
 #pragma mark - UIDocumentInteractionDelegate methods
 

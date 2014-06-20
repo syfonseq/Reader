@@ -41,6 +41,7 @@
 
 @property (nonatomic, weak, readwrite) id <ReaderViewControllerDelegate> delegate;
 @property (nonatomic, copy) void (^cartButtonActionBlock)();
+@property (nonatomic, copy) void (^sendSelectedPagesActionBlock)(NSSet * selectedPages);
 
 - (id)initWithReaderDocument:(ReaderDocument *)object;
 - (void)setBarTintColor:(UIColor *)color;

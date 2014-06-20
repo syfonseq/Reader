@@ -43,6 +43,7 @@
     UIButton *printButton;
     UIButton *openWithButton;
     UIButton *cartButton;
+    UIButton *pageSelectionButton;
 }
 
 #pragma mark Constants
@@ -59,6 +60,8 @@
 #define MARK_BUTTON_WIDTH 40.0f
 #define OPENWITH_BUTTON_WIDTH 40.0f
 #define CART_BUTTON_WIDTH 40.0f
+
+#define STANDARD_BUTTON_WIDTH 40.0f
 
 
 #define TITLE_HEIGHT 28.0f
@@ -243,34 +246,29 @@
 
 #endif // end of READER_ENABLE_OPENWITH Option
 
-#if (READER_ENABLE_MAIL == TRUE) // Option
+#if (READER_ENABLE_MAIL == TRUE || READER_ENABLE_PAGE_SELECTION == TRUE) // Option
 
-		if ([MFMailComposeViewController canSendMail] == YES) // Can email
-		{
-			unsigned long long fileSize = [object.fileSize unsignedLongLongValue];
+		if ([self canSendMailForReaderDocument:object] || READER_ENABLE_PAGE_SELECTION)
+        {
+            rightButtonX -= (EMAIL_BUTTON_WIDTH + BUTTON_SPACE);
 
-			if (fileSize < (unsigned long long)15728640) // Check attachment size limit (15MB)
-			{
-				rightButtonX -= (EMAIL_BUTTON_WIDTH + BUTTON_SPACE);
+            emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
 
-				emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            emailButton.frame = CGRectMake(rightButtonX, buttonY, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
+            [emailButton addTarget:self action:@selector(emailButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+                [emailButton setImage:[self imageNamed:@"Reader-Email" withColor:self.tintColor] forState:UIControlStateNormal];
+            }
+            else{
+                [emailButton setImage:[UIImage imageNamed:@"Reader-Email"] forState:UIControlStateNormal];
+                [emailButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+                [emailButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+            }
+            emailButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+            emailButton.exclusiveTouch = YES;
 
-				emailButton.frame = CGRectMake(rightButtonX, buttonY, EMAIL_BUTTON_WIDTH, BUTTON_HEIGHT);
-				[emailButton addTarget:self action:@selector(emailButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-                    [emailButton setImage:[self imageNamed:@"Reader-Email" withColor:self.tintColor] forState:UIControlStateNormal];
-                }
-                else{
-                    [emailButton setImage:[UIImage imageNamed:@"Reader-Email"] forState:UIControlStateNormal];
-                    [emailButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
-                    [emailButton setBackgroundImage:buttonN forState:UIControlStateNormal];
-                }
-				emailButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-				emailButton.exclusiveTouch = YES;
-
-				[self addSubview:emailButton]; titleWidth -= (EMAIL_BUTTON_WIDTH + BUTTON_SPACE);
-			}
-		}
+            [self addSubview:emailButton]; titleWidth -= (EMAIL_BUTTON_WIDTH + BUTTON_SPACE);
+        }
 
 #endif // end of READER_ENABLE_MAIL Option
 
@@ -305,6 +303,33 @@
 		}
 
 #endif // end of READER_ENABLE_PRINT Option
+
+
+#if (READER_ENABLE_PAGE_SELECTION == TRUE)
+
+        rightButtonX -= (STANDARD_BUTTON_WIDTH + BUTTON_SPACE);
+
+        pageSelectionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+
+        pageSelectionButton.frame = CGRectMake(rightButtonX, buttonY, STANDARD_BUTTON_WIDTH, BUTTON_HEIGHT);
+        [pageSelectionButton addTarget:self action:@selector(pageSelectionButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+            [pageSelectionButton setImage:[self imageNamed:@"Reader-PDFPageCart-N" withColor:self.tintColor] forState:UIControlStateNormal];
+            [pageSelectionButton setImage:[self imageNamed:@"Reader-PDFPageCart-Y" withColor:self.tintColor] forState:UIControlStateSelected];
+        }
+        else{
+            [pageSelectionButton setImage:[UIImage imageNamed:@"Reader-PDFPageCart-N"] forState:UIControlStateNormal];
+            [pageSelectionButton setImage:[UIImage imageNamed:@"Reader-PDFPageCart-Y"] forState:UIControlStateSelected];
+            [pageSelectionButton setBackgroundImage:buttonH forState:UIControlStateHighlighted];
+            [pageSelectionButton setBackgroundImage:buttonN forState:UIControlStateNormal];
+        }
+        pageSelectionButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+        pageSelectionButton.exclusiveTouch = YES;
+
+        [self addSubview:pageSelectionButton]; titleWidth -= (STANDARD_BUTTON_WIDTH + BUTTON_SPACE);
+
+#endif // end of READER_ENABLE_PAGE_SELECTION Option
+
 
 #if (READER_ENABLE_THUMBS == TRUE) // Option
         
@@ -495,6 +520,25 @@
 	}
 }
 
+- (BOOL) canSendMailForReaderDocument: (ReaderDocument *)document
+{
+    if ([MFMailComposeViewController canSendMail] == NO) {
+        return NO;
+    }
+
+    unsigned long long fileSize = [document.fileSize unsignedLongLongValue];
+    if (fileSize >= (unsigned long long)15728640) { // Check attachment size limit (15MB)
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void)setSelectedPageState: (BOOL)pageIsSelected
+{
+    pageSelectionButton.selected = pageIsSelected;
+}
+
 #pragma mark UIButton action methods
 
 - (void)doneButtonTapped:(UIButton *)button
@@ -531,6 +575,12 @@
 {
 	[delegate tappedInToolbar:self cartButton:button];
 }
+
+- (void)pageSelectionButtonTapped:(UIButton *)button
+{
+	[delegate tappedInToolbar:self pageSelectionButton:button];
+}
+
 
 
 @end

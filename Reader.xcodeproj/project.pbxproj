@@ -11,6 +11,10 @@
 		0898CC1218917E1F00F0D8C8 /* Reader-OpenWith@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */; };
 		08BD8ACA193DCDEE00B6FDF4 /* Reader-Cart.png in Resources */ = {isa = PBXBuildFile; fileRef = 08BD8AC8193DCDEE00B6FDF4 /* Reader-Cart.png */; };
 		08BD8ACB193DCDEE00B6FDF4 /* Reader-Cart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08BD8AC9193DCDEE00B6FDF4 /* Reader-Cart@2x.png */; };
+		08E90AE21953149700FEE36E /* Reader-PDFPageCart-N.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E90ADE1953149700FEE36E /* Reader-PDFPageCart-N.png */; };
+		08E90AE31953149700FEE36E /* Reader-PDFPageCart-N@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E90ADF1953149700FEE36E /* Reader-PDFPageCart-N@2x.png */; };
+		08E90AE41953149700FEE36E /* Reader-PDFPageCart-Y.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E90AE01953149700FEE36E /* Reader-PDFPageCart-Y.png */; };
+		08E90AE51953149700FEE36E /* Reader-PDFPageCart-Y@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E90AE11953149700FEE36E /* Reader-PDFPageCart-Y@2x.png */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -77,6 +81,10 @@
 		0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-OpenWith@2x.png"; path = "Graphics/Reader-OpenWith@2x.png"; sourceTree = "<group>"; };
 		08BD8AC8193DCDEE00B6FDF4 /* Reader-Cart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-Cart.png"; path = "Graphics/Reader-Cart.png"; sourceTree = "<group>"; };
 		08BD8AC9193DCDEE00B6FDF4 /* Reader-Cart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-Cart@2x.png"; path = "Graphics/Reader-Cart@2x.png"; sourceTree = "<group>"; };
+		08E90ADE1953149700FEE36E /* Reader-PDFPageCart-N.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-PDFPageCart-N.png"; path = "Graphics/Reader-PDFPageCart-N.png"; sourceTree = "<group>"; };
+		08E90ADF1953149700FEE36E /* Reader-PDFPageCart-N@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-PDFPageCart-N@2x.png"; path = "Graphics/Reader-PDFPageCart-N@2x.png"; sourceTree = "<group>"; };
+		08E90AE01953149700FEE36E /* Reader-PDFPageCart-Y.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-PDFPageCart-Y.png"; path = "Graphics/Reader-PDFPageCart-Y.png"; sourceTree = "<group>"; };
+		08E90AE11953149700FEE36E /* Reader-PDFPageCart-Y@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Reader-PDFPageCart-Y@2x.png"; path = "Graphics/Reader-PDFPageCart-Y@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -308,6 +316,10 @@
 				0898CC1018917E1F00F0D8C8 /* Reader-OpenWith@2x.png */,
 				08BD8AC8193DCDEE00B6FDF4 /* Reader-Cart.png */,
 				08BD8AC9193DCDEE00B6FDF4 /* Reader-Cart@2x.png */,
+				08E90ADE1953149700FEE36E /* Reader-PDFPageCart-N.png */,
+				08E90ADF1953149700FEE36E /* Reader-PDFPageCart-N@2x.png */,
+				08E90AE01953149700FEE36E /* Reader-PDFPageCart-Y.png */,
+				08E90AE11953149700FEE36E /* Reader-PDFPageCart-Y@2x.png */,
 			);
 			name = Reader;
 			sourceTree = "<group>";
@@ -419,6 +431,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4541A9D8122EA716001A5E60 /* Localizable.strings in Resources */,
+				08E90AE31953149700FEE36E /* Reader-PDFPageCart-N@2x.png in Resources */,
 				45AB72C6141FBFCA003524C3 /* AppIcon-057.png in Resources */,
 				45AB72C7141FBFCA003524C3 /* AppIcon-072.png in Resources */,
 				45AB72C8141FBFCA003524C3 /* AppIcon-114.png in Resources */,
@@ -435,13 +448,16 @@
 				45AB72CF141FBFCA003524C3 /* Reader-Print.png in Resources */,
 				45AB72D0141FBFCA003524C3 /* Reader-Print@2x.png in Resources */,
 				45AB72D1141FBFCA003524C3 /* Reader-Thumbs.png in Resources */,
+				08E90AE41953149700FEE36E /* Reader-PDFPageCart-Y.png in Resources */,
 				45AB72D2141FBFCA003524C3 /* Reader-Thumbs@2x.png in Resources */,
 				45AB72DC141FC039003524C3 /* Reader.pdf in Resources */,
 				45AB72DE141FC043003524C3 /* LICENSE.md in Resources */,
 				45AB72E0141FC04B003524C3 /* README.md in Resources */,
 				455C789D14268F6A0053D73B /* Reader-Button-H.png in Resources */,
 				455C789E14268F6A0053D73B /* Reader-Button-H@2x.png in Resources */,
+				08E90AE21953149700FEE36E /* Reader-PDFPageCart-N.png in Resources */,
 				455C789F14268F6A0053D73B /* Reader-Button-N.png in Resources */,
+				08E90AE51953149700FEE36E /* Reader-PDFPageCart-Y@2x.png in Resources */,
 				0898CC1118917E1F00F0D8C8 /* Reader-OpenWith.png in Resources */,
 				455C78A014268F6A0053D73B /* Reader-Button-N@2x.png in Resources */,
 				0898CC1218917E1F00F0D8C8 /* Reader-OpenWith@2x.png in Resources */,
