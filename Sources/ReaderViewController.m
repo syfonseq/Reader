@@ -896,12 +896,13 @@
     if (printInteraction != nil) [printInteraction dismissAnimated:YES];
 
     BOOL canSendMail = [self canSendMail];
+    BOOL canSendSelectedPages = [self canSendSelectedPages];
 
     // if this option is activated, the "email" button can have 2 behaviours:
     // - send the whole document using the Mail builin interface
     // - send the selected pages using a webservice
 
-    if (canSendMail && READER_ENABLE_PAGE_SELECTION) {
+    if (canSendMail && canSendSelectedPages) {
         UIActionSheet * mailActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Document complet", @""), NSLocalizedString(@"Seulement les pages sélectionnées", @""), nil];
         [mailActionSheet showFromRect:button.frame inView:mainToolbar animated:YES];
     }
@@ -1021,6 +1022,19 @@
 }
 
 #pragma mark - Page Selection stuff
+
+- (BOOL) canSendSelectedPages
+{
+    if ( ! READER_ENABLE_PAGE_SELECTION) {
+        return NO;
+    }
+
+    if (self.selectedPages.count == 0) {
+        return NO;
+    }
+
+    return YES;
+}
 
 - (void) updatePageSelectionButtonState
 {
